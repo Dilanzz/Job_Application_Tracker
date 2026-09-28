@@ -44,4 +44,10 @@ public class JobApplication {
     public void setStatus(Status status) {
         this.status = status;
     }
+
+    public void getApplicationInfo(){
+        System.out.println("ID: " + id);
+        System.out.println("Company: " + company);
+        System.out.println("Role: " + role);
+    }
 }
