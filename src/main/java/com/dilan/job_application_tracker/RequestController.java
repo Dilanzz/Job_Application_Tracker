@@ -40,8 +40,26 @@ public class RequestController {
     @PostMapping("/applications")
     public void createApplication(@RequestBody JobApplication jobApplication){
         jobApplications.add(jobApplication);
-        
+
         getInfoApplications();
+    }
+
+    @PutMapping("/applications/{id}")
+    public void updateApplication(@PathVariable("id") int id, @RequestBody JobApplication.Status status){
+        for (JobApplication jobApplication : jobApplications){
+            if (jobApplication.getId() == id){
+                jobApplication.setStatus(status);
+            }
+        }
+    }
+
+    @DeleteMapping("applications/{id}")
+    public void deleteApplication(@PathVariable("id") int id){
+        for (JobApplication jobApplication : jobApplications){
+            if (jobApplication.getId() == id){
+                jobApplications.remove(jobApplication);
+            }
+        }
     }
 
     public void getInfoApplications() {
