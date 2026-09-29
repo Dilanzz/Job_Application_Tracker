@@ -1,10 +1,16 @@
 package com.dilan.job_application_tracker;
 
+import jakarta.persistence.*;
+
+@Entity
 public class JobApplication {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String company;
     private String role;
+    @Enumerated(EnumType.STRING)
     private Status status;
 
     public enum Status {
@@ -13,11 +19,8 @@ public class JobApplication {
         REJECTED
     }
 
-    public JobApplication(int id, String company, String role, Status status) {
-        this.id = id;
-        this.company = company;
-        this.role = role;
-        this.status = status;
+    public JobApplication() {
+
     }
 
     public int getId() {
