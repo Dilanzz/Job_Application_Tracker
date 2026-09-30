@@ -24,7 +24,7 @@ public class RequestController {
     @GetMapping("/applications/{id}")
     public ResponseEntity<JobApplication> getApplication(@PathVariable("id") int id){
 
-        Optional<JobApplication> application = repository.findById(id);
+        Optional<JobApplication> application = Service.getJobApplicationById(id);
 
         if (application.isPresent()){
             return ResponseEntity.ok(application.get());
@@ -35,12 +35,12 @@ public class RequestController {
 
     @GetMapping("/applications")
     public ResponseEntity<List<JobApplication>> getJobApplications(){
-        return ResponseEntity.ok(repository.findAll());
+        return ResponseEntity.ok(Service.getAllApplications());
     }
 
     @PostMapping("/applications")
     public void createApplication(@RequestBody JobApplication jobApplication){
-        repository.save(jobApplication);
+        Service.saveJobApplication(jobApplication);
         jobApplications.add(jobApplication);
 
         getInfoApplications();
@@ -48,12 +48,12 @@ public class RequestController {
 
     @PutMapping("/applications/{id}")
     public ResponseEntity<JobApplication> updateApplication(@PathVariable("id") int id, @RequestBody JobApplication.Status status){
-        Optional<JobApplication> application = repository.findById(id);
+        Optional<JobApplication> application = Service.getJobApplicationById(id);
 
         if (application.isPresent()){
             JobApplication jobApplication = application.get();
             jobApplication.setStatus(status);
-            repository.save(jobApplication);
+            Service.saveJobApplication(jobApplication);
             return ResponseEntity.ok(jobApplication);
         } else {
             return ResponseEntity.notFound().build();
@@ -62,9 +62,9 @@ public class RequestController {
 
     @DeleteMapping("applications/{id}")
     public ResponseEntity<JobApplication> deleteApplication(@PathVariable("id") int id){
-        Optional<JobApplication> application = repository.findById(id);
+        Optional<JobApplication> application = Service.getJobApplicationById(id);
         if (application.isPresent()){
-            repository.delete(application.get());
+            Service.deleteJobApplicationById(id);
             return ResponseEntity.ok(application.get());
         } else {
             return ResponseEntity.notFound().build();
