@@ -27,11 +27,7 @@ public class RequestController {
 
         Optional<JobApplication> application = service.getJobApplicationById(id);
 
-        if (application.isPresent()){
-            return ResponseEntity.ok(application.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(application.get());
     }
 
     @GetMapping("/applications")
@@ -52,25 +48,19 @@ public class RequestController {
     public ResponseEntity<JobApplication> updateApplication(@PathVariable("id") int id, @RequestBody JobApplication.Status status){
         Optional<JobApplication> application = service.getJobApplicationById(id);
 
-        if (application.isPresent()){
-            JobApplication jobApplication = application.get();
-            jobApplication.setStatus(status);
-            service.saveJobApplication(jobApplication);
-            return ResponseEntity.ok(jobApplication);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        JobApplication jobApplication = application.get();
+        jobApplication.setStatus(status);
+        service.saveJobApplication(jobApplication);
+        return ResponseEntity.ok(jobApplication);
+
     }
 
     @DeleteMapping("applications/{id}")
     public ResponseEntity<JobApplication> deleteApplication(@PathVariable("id") int id){
         Optional<JobApplication> application = service.getJobApplicationById(id);
-        if (application.isPresent()){
-            service.deleteJobApplicationById(id);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(application.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+
+        service.deleteJobApplicationById(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(application.get());
     }
 
     public void getInfoApplications() {
