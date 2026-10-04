@@ -1,4 +1,5 @@
 package com.dilan.job_application_tracker;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
@@ -10,10 +11,10 @@ public class RequestController {
 
     ArrayList<JobApplication> jobApplications = new ArrayList<>();
 
-    private JobApplicationRepository repository;
+    Service service;
 
-    public RequestController(JobApplicationRepository jobApplicationRepository) {
-        this.repository = jobApplicationRepository;
+    public RequestController(Service service) {
+        this.service = service;
     }
 
     @GetMapping("/")
@@ -24,7 +25,7 @@ public class RequestController {
     @GetMapping("/applications/{id}")
     public ResponseEntity<JobApplication> getApplication(@PathVariable("id") int id){
 
-        Optional<JobApplication> application = Service.getJobApplicationById(id);
+        Optional<JobApplication> application = service.getJobApplicationById(id);
 
         if (application.isPresent()){
             return ResponseEntity.ok(application.get());
@@ -35,25 +36,26 @@ public class RequestController {
 
     @GetMapping("/applications")
     public ResponseEntity<List<JobApplication>> getJobApplications(){
-        return ResponseEntity.ok(Service.getAllApplications());
+        return ResponseEntity.ok(service.getAllApplications());
     }
 
     @PostMapping("/applications")
-    public void createApplication(@RequestBody JobApplication jobApplication){
-        Service.saveJobApplication(jobApplication);
+    public ResponseEntity<JobApplication> createApplication(@RequestBody JobApplication jobApplication){
+        service.saveJobApplication(jobApplication);
         jobApplications.add(jobApplication);
-
         getInfoApplications();
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(jobApplication);
     }
 
     @PutMapping("/applications/{id}")
     public ResponseEntity<JobApplication> updateApplication(@PathVariable("id") int id, @RequestBody JobApplication.Status status){
-        Optional<JobApplication> application = Service.getJobApplicationById(id);
+        Optional<JobApplication> application = service.getJobApplicationById(id);
 
         if (application.isPresent()){
             JobApplication jobApplication = application.get();
             jobApplication.setStatus(status);
-            Service.saveJobApplication(jobApplication);
+            service.saveJobApplication(jobApplication);
             return ResponseEntity.ok(jobApplication);
         } else {
             return ResponseEntity.notFound().build();
@@ -62,10 +64,10 @@ public class RequestController {
 
     @DeleteMapping("applications/{id}")
     public ResponseEntity<JobApplication> deleteApplication(@PathVariable("id") int id){
-        Optional<JobApplication> application = Service.getJobApplicationById(id);
+        Optional<JobApplication> application = service.getJobApplicationById(id);
         if (application.isPresent()){
-            Service.deleteJobApplicationById(id);
-            return ResponseEntity.ok(application.get());
+            service.deleteJobApplicationById(id);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(application.get());
         } else {
             return ResponseEntity.notFound().build();
         }

@@ -1,6 +1,7 @@
 package com.dilan.job_application_tracker;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 
 @Entity
 public class JobApplication {
@@ -8,10 +9,12 @@ public class JobApplication {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    @NotBlank(message = "Company cannot be blank")
     private String company;
+    @NotBlank(message = "role cannot be blank")
     private String role;
     @Enumerated(EnumType.STRING)
-    private Status status;
+    private Status status =  Status.PENDING;
 
     public enum Status {
         PENDING,
