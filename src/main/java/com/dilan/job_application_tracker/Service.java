@@ -28,5 +28,9 @@ public class Service {
         repository.save(jobApplication);
     }
 
+    public List<JobApplication> searchByStatus(JobApplication.Status status) {
+        return repository.findByStatus(status);
+    }
+
 
 }

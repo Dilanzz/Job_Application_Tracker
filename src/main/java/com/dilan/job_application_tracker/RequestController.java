@@ -1,4 +1,5 @@
 package com.dilan.job_application_tracker;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -8,8 +9,6 @@ import java.util.Optional;
 
 @RestController
 public class RequestController {
-
-    ArrayList<JobApplication> jobApplications = new ArrayList<>();
 
     Service service;
 
@@ -35,11 +34,16 @@ public class RequestController {
         return ResponseEntity.ok(service.getAllApplications());
     }
 
+    @GetMapping("/applications/status/{status}")
+    public ResponseEntity<List<JobApplication>> getApplicationsByStatus (@PathVariable("status") JobApplication.Status status) {
+        List<JobApplication> applications = service.searchByStatus(status);
+
+        return ResponseEntity.ok(applications);
+    }
+
     @PostMapping("/applications")
-    public ResponseEntity<JobApplication> createApplication(@RequestBody JobApplication jobApplication){
+    public ResponseEntity<JobApplication> createApplication(@Valid @RequestBody JobApplication jobApplication){
         service.saveJobApplication(jobApplication);
-        jobApplications.add(jobApplication);
-        getInfoApplications();
 
         return ResponseEntity.status(HttpStatus.CREATED).body(jobApplication);
     }
@@ -57,15 +61,8 @@ public class RequestController {
 
     @DeleteMapping("applications/{id}")
     public ResponseEntity<JobApplication> deleteApplication(@PathVariable("id") int id){
-        Optional<JobApplication> application = service.getJobApplicationById(id);
 
         service.deleteJobApplicationById(id);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(application.get());
-    }
-
-    public void getInfoApplications() {
-        for(JobApplication application : jobApplications){
-            application.getApplicationInfo();
-        }
+        return ResponseEntity.noContent().build();
     }
 }
